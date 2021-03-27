@@ -9,15 +9,16 @@ import UIKit
 import GoogleMaps
 import CoreLocation
 
-class ViewController: UIViewController, CLLocationManagerDelegate {
+class MapVC: UIViewController, CLLocationManagerDelegate {
     
     var locationManager = CLLocationManager()
-    
+    let searchBar = BABTextField()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpLocation()
         setUpMap()
+        configureSearchBar()
     }
     
     private func setUpMap(){
@@ -37,5 +38,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     private func setUpLocation(){
         locationManager.delegate = self
         locationManager.requestAlwaysAuthorization()
+    }
+    
+    private func configureSearchBar(){
+        view.addSubview(searchBar)
+
+        NSLayoutConstraint.activate([
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            searchBar.heightAnchor.constraint(equalToConstant: 35)
+        ])
+        
     }
 }
