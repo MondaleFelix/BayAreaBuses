@@ -12,6 +12,9 @@ import CoreLocation
 class MapVC: UIViewController, CLLocationManagerDelegate{
     
     var locationManager = CLLocationManager()
+    lazy var latitide = locationManager.location?.coordinate.latitude ?? 122.0090
+    lazy var longitude = locationManager.location?.coordinate.longitude ?? 37.3330
+    
     let searchBar = BABTextField()
     
     override func viewDidLoad() {
@@ -19,13 +22,29 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
         setUpLocation()
         setUpMap()
         configureSearchBar()
-    
+        getRoutes()
     }
     
 
+    private func getRoutes(){
+        NetworkManager.shared.getRoutes(start: String(latitide)+","+String(longitude), end: "Olume%20Apartments") { [weak self] (result) in
+
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let routes):
+                print(routes.count)
+            case .failure(let error):
+                print(error)
+            
+            }
+
+        }
+    }
+    
+    
     private func setUpMap(){
-        let latitide = locationManager.location?.coordinate.latitude ?? 122.0090
-        let longitude = locationManager.location?.coordinate.longitude ?? 37.3330
+
         
         let camera = GMSCameraPosition.camera(withLatitude: latitide, longitude: longitude, zoom: 15.0)
         let mapView = GMSMapView.map(withFrame: self.view.frame, camera: camera)
