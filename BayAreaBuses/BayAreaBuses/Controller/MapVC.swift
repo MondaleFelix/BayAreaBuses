@@ -14,6 +14,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
     var locationManager = CLLocationManager()
     lazy var latitide = locationManager.location?.coordinate.latitude ?? 122.0090
     lazy var longitude = locationManager.location?.coordinate.longitude ?? 37.3330
+    var routesLegs: [RoutesLegs] = []
     
     let searchBar = BABTextField()
     
@@ -22,26 +23,11 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
         setUpLocation()
         setUpMap()
         configureSearchBar()
-        getRoutes()
+        
+        
     }
     
 
-    private func getRoutes(){
-        NetworkManager.shared.getRoutes(start: String(latitide)+","+String(longitude), end: "Olume%20Apartments") { [weak self] (result) in
-
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let routes):
-                print(routes.count)
-            case .failure(let error):
-                print(error)
-            
-            }
-
-        }
-    }
-    
     
     private func setUpMap(){
 
@@ -84,7 +70,11 @@ extension MapVC: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let routesVC = RoutesVC()
+    
+        routesVC.routesLegs = self.routesLegs
+
         routesVC.modalPresentationStyle = .popover
+        
         self.present(routesVC, animated: true, completion: nil)
         return true
     }
