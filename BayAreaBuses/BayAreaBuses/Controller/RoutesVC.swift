@@ -12,6 +12,10 @@ class RoutesVC: UIViewController {
     let tableView = UITableView()
     var routesLegs : [RoutesLegs] = []
     
+    var latitude = ""
+    var longitude = ""
+    var end_location = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         getRoutes()
@@ -19,7 +23,10 @@ class RoutesVC: UIViewController {
     }
     
     private func getRoutes(){
-        NetworkManager.shared.getRoutes(start: String(37.7857832)+","+String(-122.415993), end: "Mission%20Dolores") { [weak self] (result) in
+        
+        let end_location = self.end_location.replacingOccurrences(of: " ", with: "%20")
+        
+        NetworkManager.shared.getRoutes(start: latitude+","+longitude, end: end_location) { [weak self] (result) in
 
             guard let self = self else { return }
             

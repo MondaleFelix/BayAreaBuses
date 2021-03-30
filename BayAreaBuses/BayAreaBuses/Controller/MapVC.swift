@@ -14,7 +14,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
     var locationManager = CLLocationManager()
     lazy var latitide = locationManager.location?.coordinate.latitude ?? 122.0090
     lazy var longitude = locationManager.location?.coordinate.longitude ?? 37.3330
-    var routesLegs: [RoutesLegs] = []
+
     
     let searchBar = BABTextField()
     
@@ -30,8 +30,6 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
 
     
     private func setUpMap(){
-
-        
         let camera = GMSCameraPosition.camera(withLatitude: latitide, longitude: longitude, zoom: 15.0)
         let mapView = GMSMapView.map(withFrame: self.view.frame, camera: camera)
         mapView.delegate = self
@@ -70,8 +68,10 @@ extension MapVC: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let routesVC = RoutesVC()
-    
-        routesVC.routesLegs = self.routesLegs
+        
+        routesVC.latitude = String(latitide)
+        routesVC.longitude = String(longitude)
+        routesVC.end_location = searchBar.text ?? ""
 
         routesVC.modalPresentationStyle = .popover
         
