@@ -19,8 +19,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
         setUpLocation()
         setUpMap()
         configureSearchBar()
-        createKeyboardTapGesture()
-        
+    
     }
     
 
@@ -42,11 +41,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
 
     }
     
-    
-    func createKeyboardTapGesture(){
 
-    }
-    
     private func setUpLocation(){
         locationManager.delegate = self
         locationManager.requestAlwaysAuthorization()
@@ -67,6 +62,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
 }
 
 extension MapVC: UITextFieldDelegate {
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let routesVC = RoutesVC()
         routesVC.modalPresentationStyle = .popover
