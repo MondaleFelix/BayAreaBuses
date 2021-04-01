@@ -7,10 +7,15 @@
 
 import UIKit
 
+protocol RoutesVCDelegate: class {
+    func sendPolyline(polyline:String, end: EndLocation )
+}
+
 class RoutesVC: UIViewController {
 
     let tableView = UITableView()
     var routesLegs : [RoutesLegs] = []
+    var delegate: RoutesVCDelegate?
     
     var latitude = ""
     var longitude = ""
@@ -68,9 +73,17 @@ class RoutesVC: UIViewController {
 }
 
 extension RoutesVC: UITableViewDelegate {
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        <#code#>
-//    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+        let route = self.routesLegs[indexPath.row].overview_polyline.points
+        
+        
+        let endLocation = self.routesLegs[indexPath.row].legs[0].end_location
+        
+        
+        delegate?.sendPolyline(polyline: route, end: endLocation)
+        dismiss(animated: true, completion: nil)
+    }
 }
 
 extension RoutesVC: UITableViewDataSource {

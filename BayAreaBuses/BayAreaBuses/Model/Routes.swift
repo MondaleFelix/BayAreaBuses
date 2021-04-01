@@ -7,6 +7,11 @@
 
 import Foundation
 
+struct EndLocation : Codable {
+    var lat: Double
+    var lng: Double
+}
+
 struct ArrivalTime: Codable {
     var text: String
 }
@@ -28,6 +33,7 @@ struct Legs: Codable {
     var departure_time: DepartureTime
     var distance: Distance
     var duration: Duration
+    var end_location : EndLocation
     
 }
 
