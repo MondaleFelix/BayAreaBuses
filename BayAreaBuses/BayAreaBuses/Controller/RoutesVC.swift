@@ -77,7 +77,9 @@ extension RoutesVC: UITableViewDelegate {
 
         let route = self.routesLegs[indexPath.row].overview_polyline.points
         
-        
+//        let busName = self.routesLegs[indexPath.row].legs[0].steps[0].steps[0].transit_details.line.agencies[0].name
+//        print(busName)
+//        
         let endLocation = self.routesLegs[indexPath.row].legs[0].end_location
         
         

@@ -7,6 +7,26 @@
 
 import Foundation
 
+struct BusInformation: Codable {
+    var name: String
+}
+
+struct Agencies: Codable {
+    var agencies: [BusInformation]
+}
+
+struct Line: Codable {
+    var line: Agencies
+}
+
+struct Directions: Codable {
+    var transit_details: Line
+}
+
+struct Steps: Codable {
+    var steps: [Directions]
+}
+
 struct EndLocation : Codable {
     var lat: Double
     var lng: Double
