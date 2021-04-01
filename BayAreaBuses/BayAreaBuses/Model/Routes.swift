@@ -13,6 +13,7 @@ struct BusInformation: Codable {
 
 struct Agencies: Codable {
     var agencies: [BusInformation]
+    var short_name: String
 }
 
 struct Line: Codable {
@@ -20,12 +21,9 @@ struct Line: Codable {
 }
 
 struct Directions: Codable {
-    var transit_details: Line
+    var transit_details: Line?
 }
 
-struct Steps: Codable {
-    var steps: [Directions]
-}
 
 struct EndLocation : Codable {
     var lat: Double
@@ -54,7 +52,7 @@ struct Legs: Codable {
     var distance: Distance
     var duration: Duration
     var end_location : EndLocation
-    
+    var steps: [Directions]
 }
 
 struct Polyline: Codable {
