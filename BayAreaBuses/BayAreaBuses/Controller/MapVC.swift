@@ -24,17 +24,25 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
         setUpLocation()
         setUpMap()
         configureSearchBar()
-        getBuses(busName: "28")
+
     }
     
 
-    
-    private func addMapMarker(lat: Double, long: Double){
+    // Helper method to add New Markers to Map
+    private func addMapMarker(lat: Double, long: Double, isBus: Bool = false){
+        
         let mapMarker = GMSMarker()
+        
+        if isBus {
+            mapMarker.icon = UIImage(named: "busIcon")
+        }
+        
+        
         mapMarker.position = CLLocationCoordinate2D(latitude: lat, longitude: long)
         mapMarker.map = mapView
     }
     
+    // Gets Bus Coordinates and plots them on the map
     private func getBuses(busName: String){
         NetworkManager.shared.getBusLocation() { [weak self] (result) in
             guard let self = self else { return }
@@ -43,11 +51,14 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
             case .success(let locations):
                 for i in 0..<locations.count{
                     let bus = locations[i].MonitoredVehicleJourney
-                    if busName == bus.LineRef {
-                        print(bus.VehicleLocation.Latitude, bus.VehicleLocation.Longitude)
-                    }
+                    let lat = Double(bus.VehicleLocation.Latitude)!
+                    let long = Double(bus.VehicleLocation.Longitude)!
                     
-
+                    if busName == bus.LineRef {
+                        DispatchQueue.main.sync {
+                            self.addMapMarker(lat: lat, long: long, isBus: true)
+                        }
+                    }
                 }
             case .failure(let error):
                 print(error)
@@ -62,6 +73,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
         mapView.delegate = self
         self.view.addSubview(mapView)
         addMapMarker(lat: latitide, long: longitude)
+
     }
     
     
@@ -86,6 +98,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
     private func setUpLocation(){
         locationManager.delegate = self
         locationManager.requestAlwaysAuthorization()
+        
     }
     
     // Configures Search Bar - programmaticlly
@@ -115,7 +128,6 @@ extension MapVC: UITextFieldDelegate {
         routesVC.end_location = searchBar.text ?? ""
 
         routesVC.modalPresentationStyle = .popover
-        view.endEditing(true)
 
         self.present(routesVC, animated: true, completion: nil)
         return true
@@ -132,9 +144,12 @@ extension MapVC: GMSMapViewDelegate {
 }
 
 extension MapVC:RoutesVCDelegate {
-    func sendPolyline(polyline: String, end: EndLocation) {
+    func sendPolyline(polyline: String, end: EndLocation, busId busID: String) {
         mapView.clear()
         updateMap(polyline: polyline, end: end)
+
+        self.getBuses(busName: busID)
+
 
     }
 

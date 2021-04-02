@@ -8,7 +8,7 @@
 import UIKit
 
 protocol RoutesVCDelegate: class {
-    func sendPolyline(polyline:String, end: EndLocation )
+    func sendPolyline(polyline:String, end: EndLocation, busId: String )
 }
 
 class RoutesVC: UIViewController {
@@ -25,13 +25,11 @@ class RoutesVC: UIViewController {
         super.viewDidLoad()
         getRoutes()
         configureTableView()
-        
     }
     
     private func getRoutes(){
         
         let end_location = self.end_location.replacingOccurrences(of: " ", with: "%20")
-        
         NetworkManager.shared.getRoutes(start: latitude+","+longitude, end: end_location) { [weak self] (result) in
 
             guard let self = self else { return }
@@ -45,15 +43,9 @@ class RoutesVC: UIViewController {
                 
             case .failure(let error):
                 print(error)
-            
             }
-
         }
-
     }
-    
-
-    
     
     private func configureTableView(){
         view.addSubview(tableView)
@@ -79,21 +71,19 @@ extension RoutesVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         let route = self.routesLegs[indexPath.row].overview_polyline.points
-        
         let steps = self.routesLegs[indexPath.row].legs[0].steps
+        var bus = ""
         
         for i in 0..<steps.count{
             if let busName = steps[i].transit_details?.line.short_name {
-                print("This is the " + busName)
+                bus = busName
             }
-            
         }
 
         
         let endLocation = self.routesLegs[indexPath.row].legs[0].end_location
         
-        
-        delegate?.sendPolyline(polyline: route, end: endLocation)
+        delegate?.sendPolyline(polyline: route, end: endLocation, busId: bus)
         dismiss(animated: true, completion: nil)
     }
 }
