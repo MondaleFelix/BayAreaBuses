@@ -1,3 +1,4 @@
 BayAreaBuses/Pods/GoogleMaps/Base/Frameworks/GoogleMapsBase.framework/GoogleMapsBase
 BayAreaBuses/Pods
-BayAreaBuses/BayAreaBuses/Utilities/*
+BayAreaBuses/BayAreaBuses/Utilities/**/Constants.swift
+Constants.swift
