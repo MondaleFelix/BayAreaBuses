@@ -27,6 +27,7 @@ class RoutesVC: UIViewController {
         configureTableView()
     }
     
+    // Gets possible routes to end location and displays in table view
     private func getRoutes(){
         
         let end_location = self.end_location.replacingOccurrences(of: " ", with: "%20")
@@ -40,13 +41,14 @@ class RoutesVC: UIViewController {
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
-                
             case .failure(let error):
                 print(error)
             }
         }
     }
     
+    
+    // Configures Route Table View properties
     private func configureTableView(){
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -68,6 +70,8 @@ class RoutesVC: UIViewController {
 }
 
 extension RoutesVC: UITableViewDelegate {
+    
+    // Sends selected route data to MapVC
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         let route = self.routesLegs[indexPath.row].overview_polyline.points
@@ -80,9 +84,7 @@ extension RoutesVC: UITableViewDelegate {
             }
         }
 
-        
         let endLocation = self.routesLegs[indexPath.row].legs[0].end_location
-        
         delegate?.sendPolyline(polyline: route, end: endLocation, busId: bus)
         dismiss(animated: true, completion: nil)
     }
@@ -94,8 +96,8 @@ extension RoutesVC: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // Configures TableView Cell properties as custom RoutesCell
         let cell = tableView.dequeueReusableCell(withIdentifier: "RoutesCell", for: indexPath) as! RoutesCell
-        
         let route = self.routesLegs[indexPath.row].legs[0]
         
         cell.departureLabel.text = route.departure_time.text

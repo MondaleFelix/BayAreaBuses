@@ -32,11 +32,9 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
     private func addMapMarker(lat: Double, long: Double, isBus: Bool = false){
         
         let mapMarker = GMSMarker()
-        
         if isBus {
             mapMarker.icon = UIImage(named: "busIcon")
         }
-        
         
         mapMarker.position = CLLocationCoordinate2D(latitude: lat, longitude: long)
         mapMarker.map = mapView
@@ -48,6 +46,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
             guard let self = self else { return }
             
             switch result {
+            // Creates Map Markers of bus location if request succeeds
             case .success(let locations):
                 for i in 0..<locations.count{
                     let bus = locations[i].MonitoredVehicleJourney
@@ -60,6 +59,7 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
                         }
                     }
                 }
+            // Returns error if request fails
             case .failure(let error):
                 print(error)
             }
@@ -126,7 +126,6 @@ extension MapVC: UITextFieldDelegate {
         routesVC.latitude = String(latitide)
         routesVC.longitude = String(longitude)
         routesVC.end_location = searchBar.text ?? ""
-
         routesVC.modalPresentationStyle = .popover
 
         self.present(routesVC, animated: true, completion: nil)
@@ -144,10 +143,10 @@ extension MapVC: GMSMapViewDelegate {
 }
 
 extension MapVC:RoutesVCDelegate {
+    // Updates map with selected route data
     func sendPolyline(polyline: String, end: EndLocation, busId busID: String) {
         mapView.clear()
         updateMap(polyline: polyline, end: end)
-
         self.getBuses(busName: busID)
 
 

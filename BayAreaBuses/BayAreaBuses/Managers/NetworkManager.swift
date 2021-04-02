@@ -14,7 +14,7 @@ class NetworkManager {
     private init(){}
     
 
-    
+    // GET Request to 511 API to retrieve live GPS coordinates
     func getBusLocation(completed: @escaping(Result<[MonitoredVehicleJourney], ErrorMessage>) -> Void){
         
         let endpoint = "http://api.511.org/transit/VehicleMonitoring?api_key=\(busKey)&agency=SF"
@@ -65,7 +65,7 @@ class NetworkManager {
 
     
     
-    
+    // GET Request to Google Maps API to get route from user location to end location
     func getRoutes(start: String, end: String, completed: @escaping(Result<[RoutesLegs], ErrorMessage>) -> Void){
         
         let baseURL = "https://maps.googleapis.com/maps/api/directions/"
