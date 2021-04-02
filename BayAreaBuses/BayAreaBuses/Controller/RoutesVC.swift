@@ -25,7 +25,7 @@ class RoutesVC: UIViewController {
         super.viewDidLoad()
         getRoutes()
         configureTableView()
-        getBuses()
+        
     }
     
     private func getRoutes(){
@@ -52,27 +52,7 @@ class RoutesVC: UIViewController {
 
     }
     
-    private func getBuses(){
-        
-    
-        
-        NetworkManager.shared.getBusLocation() { [weak self] (result) in
 
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let locations):
-                for i in 0..<locations.count{
-                    print(locations[i].MonitoredVehicleJourney.LineRef)
-                }
-                
-            case .failure(let error):
-                print(error)
-            }
-
-        }
-
-    }
     
     
     private func configureTableView(){
@@ -104,7 +84,7 @@ extension RoutesVC: UITableViewDelegate {
         
         for i in 0..<steps.count{
             if let busName = steps[i].transit_details?.line.short_name {
-                print(busName)
+                print("This is the " + busName)
             }
             
         }

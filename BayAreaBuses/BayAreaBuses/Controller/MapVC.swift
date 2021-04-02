@@ -9,20 +9,12 @@ import UIKit
 import GoogleMaps
 import CoreLocation
 
-class MapVC: UIViewController, CLLocationManagerDelegate, RoutesVCDelegate{
+class MapVC: UIViewController, CLLocationManagerDelegate{
     
     
-    func sendPolyline(polyline: String, end: EndLocation) {
-        mapView.clear()
-        updateMap(polyline: polyline, end: end)
-
-    }
-
     var locationManager = CLLocationManager()
-    
-    
-    lazy var latitide = locationManager.location?.coordinate.latitude ?? 122.0090
-    lazy var longitude = locationManager.location?.coordinate.longitude ?? 37.3330
+    lazy var latitide = locationManager.location?.coordinate.latitude ?? 37.7864
+    lazy var longitude = locationManager.location?.coordinate.longitude ?? -122.4065
     lazy var camera = GMSCameraPosition.camera(withLatitude: latitide, longitude: longitude, zoom: 15.0)
     lazy var mapView = GMSMapView.map(withFrame: self.view.frame, camera: camera)
     let searchBar = BABTextField()
@@ -32,16 +24,44 @@ class MapVC: UIViewController, CLLocationManagerDelegate, RoutesVCDelegate{
         setUpLocation()
         setUpMap()
         configureSearchBar()
+        getBuses(busName: "28")
     }
     
+
+    
+    private func addMapMarker(lat: Double, long: Double){
+        let mapMarker = GMSMarker()
+        mapMarker.position = CLLocationCoordinate2D(latitude: lat, longitude: long)
+        mapMarker.map = mapView
+    }
+    
+    private func getBuses(busName: String){
+        NetworkManager.shared.getBusLocation() { [weak self] (result) in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let locations):
+                for i in 0..<locations.count{
+                    let bus = locations[i].MonitoredVehicleJourney
+                    if busName == bus.LineRef {
+                        print(bus.VehicleLocation.Latitude, bus.VehicleLocation.Longitude)
+                    }
+                    
+
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
+
 
     // Initializes Map View with users current location
     private func setUpMap(){
         mapView.delegate = self
         self.view.addSubview(mapView)
-        let startLocation = GMSMarker()
-        startLocation.position = CLLocationCoordinate2D(latitude: latitide, longitude: longitude)
-        startLocation.map = mapView
+        addMapMarker(lat: latitide, long: longitude)
     }
     
     
@@ -53,13 +73,12 @@ class MapVC: UIViewController, CLLocationManagerDelegate, RoutesVCDelegate{
         line.strokeColor = .systemTeal
         line.map = mapView
         
-        let startLocation = GMSMarker()
-        startLocation.position = CLLocationCoordinate2D(latitude: latitide, longitude: longitude)
-        startLocation.map = mapView
+        // Starting Location Marker
+        addMapMarker(lat: latitide, long: longitude)
+        // End Location Marker
+        addMapMarker(lat: end.lat, long: end.lng)
 
-        let endLocation = GMSMarker()
-        endLocation.position = CLLocationCoordinate2D(latitude: end.lat, longitude: end.lng)
-        endLocation.map = mapView
+
         
     }
 
@@ -108,4 +127,16 @@ extension MapVC: GMSMapViewDelegate {
     func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
         view.endEditing(true)
     }
+    
+    
 }
+
+extension MapVC:RoutesVCDelegate {
+    func sendPolyline(polyline: String, end: EndLocation) {
+        mapView.clear()
+        updateMap(polyline: polyline, end: end)
+
+    }
+
+}
+

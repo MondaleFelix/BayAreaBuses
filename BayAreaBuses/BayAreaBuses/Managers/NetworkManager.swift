@@ -70,6 +70,8 @@ class NetworkManager {
         
         let baseURL = "https://maps.googleapis.com/maps/api/directions/"
         
+        let end = end.replacingOccurrences(of: " ", with: "%20")
+        
         let endpoint = baseURL + "json?origin=\(start)&destination=\(end)&mode=transit&transit_mode=bus&alternatives=true&key=\(apiKey)"
         
         // Returns if URL is invalid
