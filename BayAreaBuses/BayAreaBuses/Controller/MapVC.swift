@@ -29,11 +29,15 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
     
 
     // Helper method to add New Markers to Map
-    private func addMapMarker(lat: Double, long: Double, isBus: Bool = false){
+    private func addMapMarker(lat: Double, long: Double, isBus: Bool = false, isStartingLocation: Bool = false){
         
         let mapMarker = GMSMarker()
         if isBus {
             mapMarker.icon = UIImage(named: "busIcon")
+        }
+        
+        if isStartingLocation {
+            mapMarker.icon = UIImage(named: "userIcon")
         }
         
         mapMarker.position = CLLocationCoordinate2D(latitude: lat, longitude: long)
@@ -72,21 +76,30 @@ class MapVC: UIViewController, CLLocationManagerDelegate{
     private func setUpMap(){
         mapView.delegate = self
         self.view.addSubview(mapView)
-        addMapMarker(lat: latitide, long: longitude)
+        addMapMarker(lat: latitide, long: longitude, isStartingLocation: true)
 
     }
     
     
     // Updates map with returned polyline
-    private func updateMap(polyline:String, end: EndLocation){
+    private func updateMap(polyline:String, end: EndLocation, isBus: Bool){
         let path = GMSMutablePath(fromEncodedPath: polyline)
         let line = GMSPolyline(path: path)
         line.strokeWidth = 5
-        line.strokeColor = .systemTeal
+        
+        if isBus {
+            line.strokeColor = .systemTeal
+        } else {
+            line.strokeColor = .yellow
+        }
+
         line.map = mapView
+
+        
+        
         
         // Starting Location Marker
-        addMapMarker(lat: latitide, long: longitude)
+        addMapMarker(lat: latitide, long: longitude,isStartingLocation: true)
         // End Location Marker
         addMapMarker(lat: end.lat, long: end.lng)
 
@@ -144,13 +157,23 @@ extension MapVC: GMSMapViewDelegate {
 
 extension MapVC:RoutesVCDelegate {
     // Updates map with selected route data
-    func sendPolyline(polyline: String, end: EndLocation, busId busID: String) {
+    func sendPolyline(steps: [Directions], end: EndLocation, busId busID: String) {
         mapView.clear()
-        updateMap(polyline: polyline, end: end)
+        
+        for step in steps {
+            if step.travel_mode == "TRANSIT" {
+                updateMap(polyline: step.polyline.points, end: end, isBus: true)
+            } else {
+                updateMap(polyline: step.polyline.points, end: end, isBus: false)
+
+            }
+            
+        }
+        
+        
         self.getBuses(busName: busID)
 
 
     }
 
 }
-

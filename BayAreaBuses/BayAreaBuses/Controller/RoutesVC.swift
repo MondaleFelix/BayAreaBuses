@@ -8,7 +8,7 @@
 import UIKit
 
 protocol RoutesVCDelegate: class {
-    func sendPolyline(polyline:String, end: EndLocation, busId: String )
+    func sendPolyline(steps: [Directions], end: EndLocation, busId: String )
 }
 
 class RoutesVC: UIViewController {
@@ -85,7 +85,8 @@ extension RoutesVC: UITableViewDelegate {
         }
 
         let endLocation = self.routesLegs[indexPath.row].legs[0].end_location
-        delegate?.sendPolyline(polyline: route, end: endLocation, busId: bus)
+        
+        delegate?.sendPolyline(steps: steps, end: endLocation, busId: bus)
         dismiss(animated: true, completion: nil)
     }
 }

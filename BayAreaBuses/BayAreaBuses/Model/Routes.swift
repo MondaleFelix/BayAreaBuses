@@ -22,6 +22,8 @@ struct Line: Codable {
 
 struct Directions: Codable {
     var transit_details: Line?
+    var travel_mode: String
+    var polyline: Polyline
 }
 
 
@@ -44,6 +46,7 @@ struct Distance: Codable {
 
 struct Duration: Codable {
     var text: String
+    
 }
 
 struct Legs: Codable {
